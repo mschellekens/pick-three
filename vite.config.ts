@@ -8,6 +8,7 @@ import { VitePWA } from 'vite-plugin-pwa';
 function resolveBase(): string {
   const raw = process.env.BASE_PATH?.trim();
   if (!raw) return '/';
+  if (raw.startsWith('.')) return './';
   let b = raw.startsWith('/') ? raw : `/${raw}`;
   if (!b.endsWith('/')) b += '/';
   return b;

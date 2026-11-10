@@ -10,7 +10,7 @@ let applyUpdate: (() => void) | null = null;
 const updateListeners = new Set<() => void>();
 let updateReady = false;
 
-if ('serviceWorker' in navigator && import.meta.env.PROD) {
+if ('serviceWorker' in navigator && import.meta.env.PROD && import.meta.env.VITE_PREVIEW !== '1') {
   const update = registerSW({
     immediate: true,
     onNeedRefresh() {
