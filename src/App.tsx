@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { HashRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { Onboarding } from './pages/Onboarding';
 import { Today } from './pages/Today';
@@ -5,7 +6,18 @@ import { Progress } from './pages/Progress';
 import './index.css';
 
 export default function App() {
-  const done = localStorage.getItem('onboarding-complete') === 'true';
+  const [done, setDone] = useState(() => localStorage.getItem('onboarding-complete') === 'true');
+
+  useEffect(() => {
+    const sync = () => setDone(localStorage.getItem('onboarding-complete') === 'true');
+    window.addEventListener('storage', sync);
+    window.addEventListener('onboarding-done', sync);
+    return () => {
+      window.removeEventListener('storage', sync);
+      window.removeEventListener('onboarding-done', sync);
+    };
+  }, []);
+
   return (
     <HashRouter>
       <Routes>
