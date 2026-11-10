@@ -1,22 +1,40 @@
-export type Slot = 'lower' | 'push' | 'pull';
+export type Region = 'Chest' | 'Back' | 'Shoulders' | 'Arms' | 'Quads' | 'Glutes' | 'Hamstrings' | 'Core';
+
 export interface Exercise {
-  id: string; name: string; slot: Slot; primaryRegions: string[];
-  loadMode: string; defaultStepLb: number;
+  id: string;
+  name: string;
+  regions: Region[];
+  holyGrail?: boolean;
+  step: number;
 }
-export const EXERCISES: Exercise[] = [
-  { id: 'back-squat', name: 'Back squat', slot: 'lower', primaryRegions: ['Quads'], loadMode: 'total-external', defaultStepLb: 5 },
-  { id: 'leg-press', name: 'Leg press', slot: 'lower', primaryRegions: ['Quads'], loadMode: 'machine-indicated', defaultStepLb: 10 },
-  { id: 'goblet-squat', name: 'Goblet squat', slot: 'lower', primaryRegions: ['Quads'], loadMode: 'single-implement', defaultStepLb: 5 },
-  { id: 'bb-rdl', name: 'Barbell Romanian deadlift', slot: 'lower', primaryRegions: ['Glutes'], loadMode: 'total-external', defaultStepLb: 5 },
-  { id: 'hip-thrust', name: 'Hip thrust', slot: 'lower', primaryRegions: ['Glutes'], loadMode: 'total-external', defaultStepLb: 10 },
-  { id: 'bb-bench', name: 'Barbell bench press', slot: 'push', primaryRegions: ['Chest'], loadMode: 'total-external', defaultStepLb: 5 },
-  { id: 'db-bench', name: 'Dumbbell bench press', slot: 'push', primaryRegions: ['Chest'], loadMode: 'per-hand', defaultStepLb: 5 },
-  { id: 'seated-db-press', name: 'Seated dumbbell shoulder press', slot: 'push', primaryRegions: ['Shoulders'], loadMode: 'per-hand', defaultStepLb: 5 },
-  { id: 'push-up', name: 'Push-up', slot: 'push', primaryRegions: ['Chest'], loadMode: 'bodyweight-reps', defaultStepLb: 0 },
-  { id: 'lat-pulldown', name: 'Lat pulldown', slot: 'pull', primaryRegions: ['Back'], loadMode: 'machine-indicated', defaultStepLb: 10 },
-  { id: 'cs-db-row', name: 'Chest-supported dumbbell row', slot: 'pull', primaryRegions: ['Back'], loadMode: 'per-hand', defaultStepLb: 5 },
-  { id: 'pull-up', name: 'Pull-up', slot: 'pull', primaryRegions: ['Back'], loadMode: 'bodyweight-reps', defaultStepLb: 0 },
-  { id: 'assisted-pull-up', name: 'Assisted pull-up', slot: 'pull', primaryRegions: ['Back'], loadMode: 'assistance-indicated', defaultStepLb: 10 },
+
+export const SHORTLIST: Exercise[] = [
+  { id: 'squat', name: 'Barbell back squat', regions: ['Quads', 'Glutes'], holyGrail: true, step: 5 },
+  { id: 'deadlift', name: 'Conventional deadlift', regions: ['Back', 'Glutes', 'Hamstrings'], holyGrail: true, step: 10 },
+  { id: 'bench', name: 'Barbell bench press', regions: ['Chest', 'Arms'], holyGrail: true, step: 5 },
+  { id: 'ohp', name: 'Overhead press', regions: ['Shoulders', 'Arms'], holyGrail: true, step: 5 },
+  { id: 'pullup', name: 'Pull-up', regions: ['Back', 'Arms'], holyGrail: true, step: 0 },
+  { id: 'row', name: 'Barbell row', regions: ['Back'], holyGrail: true, step: 5 },
+  { id: 'rdl', name: 'Romanian deadlift', regions: ['Hamstrings', 'Glutes'], holyGrail: true, step: 5 },
+  { id: 'hipthrust', name: 'Hip thrust', regions: ['Glutes'], holyGrail: true, step: 10 },
+  { id: 'dip', name: 'Dip', regions: ['Chest', 'Arms'], holyGrail: true, step: 0 },
+  { id: 'incline', name: 'Incline bench press', regions: ['Chest', 'Shoulders'], holyGrail: true, step: 5 },
 ];
-export const getExercise = (id: string) => EXERCISES.find(e => e.id === id);
-export const exercisesForSlot = (s: Slot) => EXERCISES.filter(e => e.slot === s);
+
+export const LIBRARY: Exercise[] = [
+  ...SHORTLIST,
+  { id: 'legpress', name: 'Leg press', regions: ['Quads'], step: 10 },
+  { id: 'pulldown', name: 'Lat pulldown', regions: ['Back'], step: 10 },
+  { id: 'dbbench', name: 'Dumbbell bench', regions: ['Chest'], step: 5 },
+  { id: 'lateral', name: 'Lateral raise', regions: ['Shoulders'], step: 2.5 },
+  { id: 'curl', name: 'Barbell curl', regions: ['Arms'], step: 2.5 },
+  { id: 'tricep', name: 'Tricep pushdown', regions: ['Arms'], step: 5 },
+  { id: 'lunge', name: 'Walking lunge', regions: ['Quads', 'Glutes'], step: 5 },
+  { id: 'facepull', name: 'Face pull', regions: ['Shoulders', 'Back'], step: 5 },
+  { id: 'legcurl', name: 'Leg curl', regions: ['Hamstrings'], step: 5 },
+  { id: 'calf', name: 'Calf raise', regions: ['Quads'], step: 10 },
+  { id: 'plank', name: 'Plank', regions: ['Core'], step: 0 },
+  { id: 'hangingleg', name: 'Hanging leg raise', regions: ['Core'], step: 0 },
+];
+
+export const getExercise = (id: string) => LIBRARY.find(e => e.id === id);

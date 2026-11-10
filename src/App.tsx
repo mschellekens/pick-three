@@ -7,17 +7,12 @@ import './index.css';
 
 export default function App() {
   const [done, setDone] = useState(() => localStorage.getItem('onboarding-complete') === 'true');
-
   useEffect(() => {
     const sync = () => setDone(localStorage.getItem('onboarding-complete') === 'true');
     window.addEventListener('storage', sync);
     window.addEventListener('onboarding-done', sync);
-    return () => {
-      window.removeEventListener('storage', sync);
-      window.removeEventListener('onboarding-done', sync);
-    };
+    return () => { window.removeEventListener('storage', sync); window.removeEventListener('onboarding-done', sync); };
   }, []);
-
   return (
     <HashRouter>
       <Routes>
