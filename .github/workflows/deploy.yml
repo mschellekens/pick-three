@@ -1,0 +1,109 @@
+# Build, test and deploy Pick Three to GitHub Pages.
+# Docs: https://docs.github.com/en/pages/getting-started-with-github-pages/using-custom-workflows-with-github-pages
+#       https://vite.dev/guide/static-deploy.html#github-pages
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci
+
+      - name: Configure Pages
+        id: pages
+        if: github.event_name != 'pull_request'
+        uses: actions/configure-pages@v5
+
+      - name: Resolve base path
+        id: base
+        run: |
+          BASE="${{ steps.pages.outputs.base_path }}"
+          if [ -z "$BASE" ]; then BASE="/${GITHUB_REPOSITORY#*/}"; fi
+          echo "path=${BASE%/}/" >> "$GITHUB_OUTPUT"
+
+      - name: Type check
+        run: npm run typecheck
+
+      - name: Unit tests
+        run: npm test
+
+      - name: Production build
+        run: npx vite build
+        env:
+          BASE_PATH: ${{ steps.base.outputs.path }}
+
+      - name: Verify artifact
+        run: |
+          test -f dist/index.html
+          test -f dist/manifest.webmanifest
+          test -f dist/sw.js
+          test -f dist/icons/icon-192.png
+          test -f dist/icons/icon-512.png
+          test -f dist/icons/maskable-512.png
+          test -f dist/icons/apple-touch-icon.png
+          grep -q '"start_url":"${{ steps.base.outputs.path }}"' dist/manifest.webmanifest
+          grep -q 'src="${{ steps.base.outputs.path }}assets/' dist/index.html
+
+      - name: Mobile browser tests, iPhone viewport on Chromium (built app under /pick-three/)
+        run: |
+          npx playwright install --with-deps chromium webkit
+          npx vite build
+          npx playwright test --project=iphone-chromium
+        env:
+          BASE_PATH: /pick-three/
+          CI: 'true'
+
+      # WebKit emulation is informative. It is not a physical iPhone and does not block deploys.
+      - name: Mobile browser tests, WebKit emulation
+        continue-on-error: true
+        run: PW_WEBKIT=1 npx playwright test --project=iphone-webkit
+        env:
+          BASE_PATH: /pick-three/
+          CI: 'true'
+
+      - name: Rebuild for the Pages path
+        if: github.event_name != 'pull_request'
+        run: npx vite build
+        env:
+          BASE_PATH: ${{ steps.base.outputs.path }}
+
+      - name: Upload Pages artifact
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: dist
+
+  deploy:
+    if: github.event_name != 'pull_request' && github.ref == format('refs/heads/{0}', github.event.repository.default_branch)
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v5

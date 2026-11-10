@@ -1,0 +1,40 @@
+{
+  "name": "pick-three",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Pick three lifts. Get stronger. A local-first strength log for iPhone.",
+  "type": "module",
+  "engines": {
+    "node": ">=20.19.0"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "build:pages": "tsc -b && cross-env BASE_PATH=/pick-three/ vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc -b --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "check": "npm run typecheck && npm test && npm run build:pages && npm run test:e2e",
+    "icons": "node scripts/make-icons.mjs"
+  },
+  "dependencies": {
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.56.0",
+    "@types/node": "^22.20.5",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
+    "@vitejs/plugin-react": "^6.0.0",
+    "cross-env": "^10.0.0",
+    "fake-indexeddb": "^6.2.0",
+    "typescript": "~5.9.0",
+    "vite": "^8.0.0",
+    "vite-plugin-pwa": "^2.0.0",
+    "vitest": "^5.0.0",
+    "workbox-window": "^7.4.0"
+  }
+}

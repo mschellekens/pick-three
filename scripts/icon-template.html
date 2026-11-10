@@ -1,0 +1,22 @@
+<!doctype html><html><body style="margin:0;background:transparent">
+<svg id="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <rect width="512" height="512" fill="#0d1015"/>
+  <g id="g" transform="translate(256 256)">
+    <circle r="190" fill="#161a21"/>
+    <g stroke="#0a0c11" stroke-width="10" stroke-linejoin="round">
+      <rect x="-128" y="-10" width="64" height="120" rx="16" fill="#ff7a1a"/>
+      <rect x="-32" y="-70" width="64" height="180" rx="16" fill="#ff7a1a"/>
+      <rect x="64" y="-130" width="64" height="240" rx="16" fill="#ff7a1a"/>
+    </g>
+    <path d="M-150,140 L150,140" stroke="#a3abb9" stroke-width="10" stroke-linecap="round"/>
+  </g>
+</svg>
+<script>
+const p = new URLSearchParams(location.search);
+const s = Number(p.get('size') || 512);
+const scale = Number(p.get('scale') || 1);
+const svg = document.getElementById('icon');
+svg.setAttribute('width', s); svg.setAttribute('height', s);
+document.getElementById('g').setAttribute('transform', `translate(256 256) scale(${scale})`);
+</script>
+</body></html>
