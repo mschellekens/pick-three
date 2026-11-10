@@ -1,4 +1,4 @@
-import { AVATAR_FRONT } from '../data/avatars';
+import { useEffect, useState } from 'react';
 import type { Region } from '../data/exercises';
 
 const REGIONS: { id: Region; top: string; left: string; w: string; h: string }[] = [
@@ -10,11 +10,19 @@ const REGIONS: { id: Region; top: string; left: string; w: string; h: string }[]
 ];
 
 export function Avatar({ volume }: { volume: Partial<Record<Region, number>> }) {
+  const [src, setSrc] = useState<string | null>(null);
+  useEffect(() => {
+    fetch('./avatars/front.b64').then(r => r.text()).then(b => setSrc('data:image/jpeg;base64,' + b.trim())).catch(() => {});
+  }, []);
   const total = Object.values(volume).reduce((a, b) => a + (b || 0), 0);
   const intensity = Math.min(1, total / 40);
   return (
-    <div style={{ position: 'relative', width: '100%', maxWidth: 280, margin: '0 auto', aspectRatio: '3/4', borderRadius: 16, overflow: 'hidden', background: '#000' }}>
-      <img src={AVATAR_FRONT} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', filter: `contrast(${1 + intensity * 0.15}) saturate(${1 + intensity * 0.3})` }} />
+    <div style={{ position: 'relative', width: '100%', maxWidth: 280, margin: '0 auto', aspectRatio: '3/4', borderRadius: 16, overflow: 'hidden', background: '#0a0a0a' }}>
+      {src ? (
+        <img src={src} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', filter: `contrast(${1 + intensity * 0.15}) saturate(${1 + intensity * 0.3})` }} />
+      ) : (
+        <div style={{ width: '100%', height: '100%', background: 'linear-gradient(180deg,#1a1a1a,#0a0a0a)' }} />
+      )}
       {REGIONS.filter(r => (volume[r.id] || 0) > 0).map(r => {
         const v = Math.min(1, (volume[r.id] || 0) / 12);
         return (
